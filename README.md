@@ -4,7 +4,7 @@ A [Luzmo](https://www.luzmo.com) custom chart that puts your data on a 3D night 
 
 It is a generic version of [Amsterdam Tech Pay](https://github.com/jvannistelrooy/amsterdam-pay-map), which shows what tech companies in Amsterdam pay.
 
-![Tech pay per company on the Amsterdam map, with a company's detail card open](docs/screenshot-tech-pay.jpg)
+![The Amsterdam map in a Luzmo dashboard: tech pay per company, coloured by sector, with a Role filter and linked charts below](docs/screenshot-dashboard.jpg)
 
 ## What it does
 
