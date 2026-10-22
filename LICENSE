@@ -1,7 +1,37 @@
+This repository contains material under different terms. Read which part a
+file belongs to before reusing it.
+
+1. Amsterdam map chart: MIT License
+   Covers:
+   - projects/custom-chart/src/, except projects/custom-chart/src/index.ts
+     and projects/custom-chart/src/data/
+   - test/
+   - docs/
+
+2. Luzmo custom chart builder: not covered by the MIT License
+   Every other file comes from the Luzmo custom chart builder
+   (https://github.com/luzmo-official/custom-chart-builder). These files are
+   copyright Luzmo and are included with permission. The MIT License below
+   does not apply to them; see the builder repository for their terms.
+
+3. Map data: CC BY 4.0
+   projects/custom-chart/src/data/city.bin.gz is derived from 3DBAG (3DGI and
+   the 3D Geoinformation group at TU Delft) and TOP10NL (© Kadaster, via
+   PDOK). It is licensed under CC BY 4.0
+   (https://creativecommons.org/licenses/by/4.0/); see README.md for the
+   attribution.
+
+4. Dependencies
+   npm packages keep their own licences. Luzmo's packages, such as
+   @luzmo/dashboard-contents-types and @luzmo/analytics-components-kit, are
+   licensed under the Luzmo Terms of Service.
+
+-------------------------------------------------------------------------------
+
 MIT License
 
-Copyright (c) 2026 Luzmo
 Copyright (c) 2026 Amsterdam Tech Pay contributors
+Copyright (c) 2026 Amsterdam map contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +50,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-The map data in projects/custom-chart/src/data/city.bin.gz is not covered by
-this licence. It is derived from 3DBAG and TOP10NL and keeps their CC BY 4.0
-licences; see README.md for the attribution.

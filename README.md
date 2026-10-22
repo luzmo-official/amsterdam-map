@@ -127,4 +127,10 @@ This builds, validates and uploads a new chart. To replace the code of a chart y
 
 ## Licence
 
-The code is MIT licensed (see `LICENSE`). The map data in `projects/custom-chart/src/data/` keeps the CC BY 4.0 licences of its sources listed above, and the chart always shows their credit.
+This repository mixes three licences; `LICENSE` lists exactly which files fall under each.
+
+- **The chart code** in `projects/custom-chart/src/`, the test page in `test/` and the screenshots in `docs/` are MIT licensed.
+- **The rest of the repository** is the [Luzmo custom chart builder](https://github.com/luzmo-official/custom-chart-builder), copyright Luzmo and included with permission. It is not covered by the MIT licence.
+- **The map data** in `projects/custom-chart/src/data/` keeps the CC BY 4.0 licences of its sources listed above, and the chart always shows their credit.
+
+The chart depends on Luzmo npm packages (`@luzmo/dashboard-contents-types`, `@luzmo/analytics-components-kit`), which are licensed under the Luzmo Terms of Service.
