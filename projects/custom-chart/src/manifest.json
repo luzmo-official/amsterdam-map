@@ -1,85 +1,194 @@
 {
   "slots": [
     {
-      "name": "category",
-      "rotate": false,
-      "label": "Category",
+      "name": "name",
+      "label": "Label",
+      "description": "One pillar per value, for example a company, hotel or charging station. Also the column a click filters the dashboard on.",
       "type": "categorical",
-      "options": {
-        "isBinningDisabled": true,
-        "areDatetimeOptionsEnabled": true
-      },
+      "position": "bottom",
+      "rotate": false,
       "isRequired": true,
-      "acceptableColumnTypes": ["hierarchy", "datetime"]
+      "acceptableDataFieldTypes": ["hierarchy"],
+      "options": { "isBinningDisabled": true }
+    },
+    {
+      "name": "coordinates",
+      "label": "Latitude & longitude",
+      "description": "Two numeric fields: latitude first, then longitude (WGS84). Both are averaged per label.",
+      "type": "numeric",
+      "position": "left",
+      "rotate": true,
+      "isRequired": true,
+      "canAcceptMultipleDataFields": true,
+      "requiredMinimumColumnsCount": 2,
+      "acceptableDataFieldTypes": ["numeric"],
+      "options": { "isAggregationDisabled": true }
     },
     {
       "name": "measure",
-      "rotate": true,
-      "label": "Value",
+      "label": "Measure",
+      "description": "Sets the pillar height: the largest value gets the tallest pillar.",
       "type": "numeric",
-      "options": {
-        "isAggregationDisabled": false
-      },
+      "position": "middle",
+      "rotate": false,
       "isRequired": true,
-      "acceptableColumnTypes": ["numeric"],
-      "canAcceptFormula": true
+      "canAcceptFormula": true,
+      "acceptableDataFieldTypes": ["numeric"]
     },
     {
-      "name": "legend",
+      "name": "color",
+      "label": "Color",
+      "description": "A category gives a legend with filter chips; a number gives a color gradient.",
+      "type": "mixed",
+      "position": "right",
+      "rotate": true,
+      "canAcceptFormula": true,
+      "acceptableDataFieldTypes": ["hierarchy", "datetime", "numeric"],
+      "options": { "isBinningDisabled": true, "areDatetimeOptionsEnabled": true }
+    },
+    {
+      "name": "details",
+      "label": "Details",
+      "description": "Up to 8 fields shown in the tooltip and the detail card. Text values that start with http become a link button.",
+      "type": "mixed",
+      "position": "bottom-left",
       "rotate": false,
-      "label": "Legend",
-      "type": "categorical",
-      "options": {
-        "isBinningDisabled": true
-      },
-      "isRequired": false,
-      "acceptableColumnTypes": ["hierarchy", "datetime"]
+      "canAcceptMultipleDataFields": true,
+      "canAcceptFormula": true,
+      "acceptableDataFieldTypes": ["hierarchy", "datetime", "numeric"],
+      "options": { "isBinningDisabled": true, "areDatetimeOptionsEnabled": true }
     }
   ],
   "options": [
     {
-      "key": "bars",
+      "key": "pillars",
       "type": "group",
       "open": true,
       "children": [
+        { "key": "height.scale", "control": { "type": "picker", "default": "linear", "enum": ["linear", "sqrt", "log"] } },
+        { "key": "height.max", "control": { "type": "radio-button-group", "default": "auto", "enum": ["auto", "fixed"] } },
+        { "key": "height.fixedMax", "control": { "type": "number-field", "default": 0, "min": 0 } }
+      ]
+    },
+    {
+      "key": "colors",
+      "type": "group",
+      "open": false,
+      "children": [
+        { "key": "color.mode", "control": { "type": "picker", "default": "slot", "enum": ["slot", "measure", "single"] } },
+        { "key": "color.source", "control": { "type": "picker", "default": "hierarchy", "enum": ["hierarchy", "theme", "palette"] } },
+        { "key": "color.palette", "control": { "type": "color-palette-picker", "default": "Set1", "enum": ["Set1", "Set3", "Paired", "Spectrum", "Plasma", "Ocean"] } },
         {
-          "key": "bars.roundedCorners",
-          "control": { "type": "slider", "default": 4, "min": 0, "max": 20, "step": 1 }
+          "key": "color.range",
+          "control": {
+            "type": "color-range",
+            "default": [
+              { "color": "#3b5bdb", "value": 0 },
+              { "color": "#e8c26a", "value": 50 },
+              { "color": "#ff5468", "value": 100 }
+            ],
+            "percentage": true,
+            "editRangeSize": true,
+            "minimumRangeSize": 2,
+            "noAlphaChannel": true
+          }
         },
-        {
-          "key": "bars.showValue",
-          "control": { "type": "switch", "default": false }
-        }
+        { "key": "color.single", "control": { "type": "color-picker", "default": "#ff5468" } }
+      ]
+    },
+    {
+      "key": "labels",
+      "type": "group",
+      "open": false,
+      "children": [
+        { "key": "labels.density", "control": { "type": "radio-button-group", "default": "top", "enum": ["none", "top", "all"] } },
+        { "key": "labels.topN", "control": { "type": "number-field", "default": 12, "min": 1, "max": 200, "step": 1 } },
+        { "key": "labels.value", "control": { "type": "switch", "default": true } }
+      ]
+    },
+    {
+      "key": "card",
+      "type": "group",
+      "open": false,
+      "children": [
+        { "key": "interaction.filter", "control": { "type": "switch", "default": true } },
+        { "key": "card.rank", "control": { "type": "switch", "default": true } },
+        { "key": "rank.order", "control": { "type": "radio-button-group", "default": "desc", "enum": ["desc", "asc"] } },
+        { "key": "card.linkText", "control": { "type": "text-field", "default": "Open link" } },
+        { "key": "card.note", "control": { "type": "text-field", "default": "" } }
+      ]
+    },
+    {
+      "key": "panel",
+      "type": "group",
+      "open": false,
+      "children": [
+        { "key": "panel.show", "control": { "type": "switch", "default": false } },
+        { "key": "panel.title", "control": { "type": "text-field", "default": "" } },
+        { "key": "panel.subtitle", "control": { "type": "text-field", "default": "" } },
+        { "key": "footer.source", "control": { "type": "text-field", "default": "" } }
+      ]
+    },
+    {
+      "key": "mapview",
+      "type": "group",
+      "open": false,
+      "children": [
+        { "key": "camera.start", "control": { "type": "picker", "default": "fit", "enum": ["fit", "city", "centrum"] } },
+        { "key": "camera.tilt", "control": { "type": "switch", "default": true } },
+        { "key": "map.metro", "control": { "type": "switch", "default": true } },
+        { "key": "map.streets", "control": { "type": "switch", "default": true } },
+        { "key": "map.districts", "control": { "type": "switch", "default": true } },
+        { "key": "map.trees", "control": { "type": "switch", "default": true } },
+        { "key": "map.animation", "control": { "type": "switch", "default": true } }
       ]
     }
   ],
   "translations": {
     "en": {
       "slots": {
-        "category": { "label": "Category" },
-        "measure": { "label": "Value" },
-        "legend": { "label": "Legend" }
+        "name": { "label": "Label" },
+        "coordinates": { "label": "Latitude & longitude" },
+        "measure": { "label": "Measure" },
+        "color": { "label": "Color" },
+        "details": { "label": "Details" }
       },
       "options": {
         "groups": {
-          "bars": { "label": "Bars" }
+          "pillars": { "label": "Pillars" },
+          "colors": { "label": "Colors" },
+          "labels": { "label": "Labels" },
+          "card": { "label": "Click & detail card" },
+          "panel": { "label": "Side panel & footer" },
+          "mapview": { "label": "Map" }
         },
-        "bars.roundedCorners": { "label": "Rounded corners" },
-        "bars.showValue": { "label": "Show value in bar" }
-      }
-    },
-    "fr": {
-      "slots": {
-        "category": { "label": "Catégorie" },
-        "measure": { "label": "Valeur" },
-        "legend": { "label": "Légende" }
-      },
-      "options": {
-        "groups": {
-          "bars": { "label": "Barres" }
-        },
-        "bars.roundedCorners": { "label": "Coins arrondis" },
-        "bars.showValue": { "label": "Afficher la valeur dans la barre" }
+        "height.scale": { "label": "Height scale", "tooltip": "Linear keeps the ratios between pillars true. Square root and log make small values easier to see.", "enum": { "linear": "Linear", "sqrt": "Square root", "log": "Logarithmic" } },
+        "height.max": { "label": "Tallest pillar", "tooltip": "Auto: the largest value in the current, filtered data. Fixed: a value you set, so heights stay comparable when filters change.", "enum": { "auto": "Auto", "fixed": "Fixed value" } },
+        "height.fixedMax": { "label": "Fixed maximum value", "tooltip": "Used when Tallest pillar is set to Fixed value." },
+        "color.mode": { "label": "Color by", "enum": { "slot": "Color slot", "measure": "Measure", "single": "Single color" } },
+        "color.source": { "label": "Category colors", "tooltip": "Hierarchy uses the colors set on the column's values, then the theme colors, then the palette.", "enum": { "hierarchy": "Hierarchy colors", "theme": "Theme colors", "palette": "Palette" } },
+        "color.palette": { "label": "Palette" },
+        "color.range": { "label": "Gradient", "tooltip": "Used for a numeric Color field or when coloring by measure." },
+        "color.single": { "label": "Single color" },
+        "labels.density": { "label": "Point labels", "enum": { "none": "None", "top": "Top N", "all": "All (max 200)" } },
+        "labels.topN": { "label": "Number of labels" },
+        "labels.value": { "label": "Show value in labels" },
+        "interaction.filter": { "label": "Click filters the dashboard" },
+        "card.rank": { "label": "Show rank in card" },
+        "rank.order": { "label": "Rank #1 is", "enum": { "desc": "Highest value", "asc": "Lowest value" } },
+        "card.linkText": { "label": "Link button text" },
+        "card.note": { "label": "Card note" },
+        "panel.show": { "label": "Show search & ranking panel" },
+        "panel.title": { "label": "Panel title", "placeholder": "Amsterdam" },
+        "panel.subtitle": { "label": "Panel subtitle", "placeholder": "Measure name" },
+        "footer.source": { "label": "Data source credit", "tooltip": "Shown before the fixed 3DBAG and TOP10NL credit." },
+        "camera.start": { "label": "Start view", "enum": { "fit": "Fit data", "city": "Whole city", "centrum": "Centrum" } },
+        "camera.tilt": { "label": "3D view" },
+        "map.metro": { "label": "Metro 52 & 54" },
+        "map.streets": { "label": "Street names" },
+        "map.districts": { "label": "Neighbourhood names" },
+        "map.trees": { "label": "Trees" },
+        "map.animation": { "label": "Animation" }
       }
     }
   }

@@ -1,0 +1,10 @@
+export interface MetroLine { id: string; name: string; color: string; st: [string, number, number][] }
+
+export const LINES: MetroLine[] = [
+  {id:"52",name:"Noord/Zuidlijn",color:"#2fb2e0",st:[["Noord",52.4012,4.9330],["Noorderpark",52.3905,4.9196],["Centraal Station",52.3784,4.9003],["Rokin",52.3698,4.8925],["Vijzelgracht",52.3613,4.8908],["De Pijp",52.3546,4.8916],["Europaplein",52.3428,4.8925],["Station Zuid",52.3389,4.8730]]},
+  {id:"54",name:"Geinlijn",color:"#f5c400",st:[["Centraal Station",52.3784,4.9003],["Nieuwmarkt",52.3721,4.9005],["Waterlooplein",52.3672,4.9030],["Weesperplein",52.3612,4.9077],["Wibautstraat",52.3555,4.9125],["Amstel",52.3466,4.9179],["Spaklerweg",52.3402,4.9208],["Van der Madeweg",52.3299,4.9301],["Duivendrecht",52.3234,4.9364],["Strandvliet",52.3176,4.9378],["Bijlmer ArenA",52.3121,4.9471]]},
+];
+
+export const DISTRICTS: [string, number, number][] = [["Centrum",52.3700,4.8950],["Jordaan",52.3745,4.8785],["Noord",52.3960,4.9200],["West",52.3800,4.8600],["Oud-West",52.3650,4.8660],["Oud-Zuid",52.3520,4.8750],["De Pijp",52.3545,4.8960],["Zuidas",52.3330,4.8730],["Plantage",52.3660,4.9120],["Oost",52.3590,4.9320],["Rivierenbuurt",52.3445,4.9010],["Watergraafsmeer",52.3500,4.9450],["Sloterdijk",52.3900,4.8400],["Nieuw-West",52.3620,4.8100],["Zuidoost",52.3100,4.9650],["IJburg",52.3540,5.0000],["Amstelveen",52.3030,4.8600]];
+
+export const LANDMARKS: [string, number, number][] = [["Centraal Station",52.3789,4.9003],["A'DAM Toren",52.3845,4.9022],["EYE Filmmuseum",52.3843,4.8990],["Royal Palace",52.3731,4.8913],["Westerkerk",52.3747,4.8839],["Anne Frank Huis",52.3752,4.8840],["Rijksmuseum",52.3600,4.8852],["Van Gogh Museum",52.3584,4.8811],["Concertgebouw",52.3563,4.8791],["NEMO",52.3741,4.9123],["Oude Kerk",52.3744,4.8982],["Munttoren",52.3664,4.8937],["Magere Brug",52.3634,4.9025],["Artis",52.3660,4.9166],["Heineken Experience",52.3578,4.8916],["Muziekgebouw",52.3786,4.9126],["Olympisch Stadion",52.3434,4.8545],["RAI",52.3410,4.8890],["Johan Cruijff ArenA",52.3143,4.9419],["Station Zuid",52.3389,4.8730],["Amstel Station",52.3466,4.9179],["Station Sloterdijk",52.3889,4.8380],["Schiphol",52.3105,4.7630]];
