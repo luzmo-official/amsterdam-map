@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "esbuild src/index.ts --bundle --minify --outfile=../../custom-chart-build-output/index.js --format=esm && esbuild src/chart.css --minify --outfile=../../custom-chart-build-output/index.css",
+    "build": "esbuild src/index.ts --bundle --minify --loader:.gz=binary --target=es2022 --outfile=../../custom-chart-build-output/index.js --format=esm &&esbuild src/chart.css --minify --outfile=../../custom-chart-build-output/index.css",
     "watch": "node watch.js"
   },
   "peerDependencies": {
@@ -12,10 +12,10 @@
   },
   "dependencies": {
     "@luzmo/analytics-components-kit": "1.0.6",
-    "d3": "^7.9.0"
+    "three": "^0.128.0"
   },
   "devDependencies": {
-    "@types/d3": "^7.4.3",
+    "@types/three": "^0.128.0",
     "esbuild": "^0.28.0",
     "typescript": "^5.9.3"
   }
