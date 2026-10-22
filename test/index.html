@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Close to the Luzmo custom chart sandbox: the bundle is loaded through a blob: URL like there. 'self' is added to script-src only for this harness's own scripts. -->
+<meta http-equiv="Content-Security-Policy" content="connect-src 'self' blob: https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.luzmo.com https://*.bing.com https://cdn.jsdelivr.net/npm/; script-src 'self' 'unsafe-inline' blob: https://cdn.jsdelivr.net/npm/ https://*.bing.com; worker-src blob:">
+<title>Amsterdam map – test harness</title>
+<style>
+  body { margin: 0; font: 13px/1.4 system-ui, sans-serif; background: #e9ecf1; color: #1b2330; }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; padding: 8px 12px; background: #fff; border-bottom: 1px solid #d5dae2; }
+  .toolbar label { display: inline-flex; gap: 4px; align-items: center; }
+  #wrap { padding: 12px; }
+  #chart { width: 1200px; height: 720px; background: #000; box-shadow: 0 2px 10px rgba(0,0,0,.2); }
+  #log { font: 12px ui-monospace, Menlo, monospace; white-space: pre-wrap; padding: 0 12px 12px; max-height: 160px; overflow: auto; }
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <label>Data <select id="ds"><option value="techPay">Tech pay (data.js)</option><option value="evCharging">EV charging (320 + edge cases)</option><option value="hotels">Hotels (numeric colour)</option><option value="empty">Empty slots</option></select></label>
+  <label>Scale <select id="scale"><option>linear</option><option>sqrt</option><option>log</option></select></label>
+  <label>Max <select id="max"><option>auto</option><option>fixed</option></select><input id="fixedMax" type="number" value="300000" style="width:80px"></label>
+  <label>Color <select id="cmode"><option>slot</option><option>measure</option><option>single</option></select></label>
+  <label>Source <select id="csrc"><option>hierarchy</option><option>theme</option><option>palette</option></select></label>
+  <label>Labels <select id="labels"><option>top</option><option>all</option><option>none</option></select></label>
+  <label><input type="checkbox" id="panel"> Panel</label>
+  <label>Start <select id="cam"><option>fit</option><option>city</option><option>centrum</option></select></label>
+  <label><input type="checkbox" id="tilt" checked> 3D</label>
+  <label><input type="checkbox" id="anim" checked> Animation</label>
+  <label>Size <select id="size"><option value="1200x720">1200×720</option><option value="600x640">600×640 (narrow)</option><option value="640x420">640×420 (short)</option><option value="375x700">375×700</option></select></label>
+  <button id="go" type="button">Render</button>
+</div>
+<div id="wrap"><div id="chart"></div></div>
+<div id="log"></div>
+<script src="data.js"></script>
+<script type="module">
+  import * as F from './fixtures.js';
+  const t0 = performance.now();
+  const src = await (await fetch('../custom-chart-build-output/index.js')).text();
+  const chart = await import(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
+  const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = '../custom-chart-build-output/index.css'; document.head.appendChild(css);
+  const log = (m) => { const el = document.getElementById('log'); el.textContent = `${(performance.now() - t0).toFixed(0)} ms  ${m}\n` + el.textContent; };
+  window.addEventListener('message', (e) => { if (e.data?.type) log('postMessage ' + JSON.stringify(e.data)); });
+  const container = document.getElementById('chart');
+  const $ = (id) => document.getElementById(id);
+  const theme = { colors: ['#6aa6ff', '#ffb35c', '#7fd4a8', '#ff7a90', '#c7a0ff', '#f6e06e'], mainColor: '#6aa6ff' };
+  function params() {
+    const [w, h] = $('size').value.split('x').map(Number);
+    container.style.width = w + 'px'; container.style.height = h + 'px';
+    const ds = $('ds').value;
+    const fx = ds === 'empty' ? { slots: [], rows: [] } : F[ds]();
+    const q = chart.buildQuery({ slots: fx.slots, slotConfigurations: [] });
+    log(`${ds}: ${fx.rows.length} rows; buildQuery → ${q.length ? `${q[0].dimensions.length} dims, ${q[0].measures.length} measures, limit ${q[0].limit.by}, order ${JSON.stringify(q[0].order)}` : 'no query'}`);
+    return {
+      container, data: fx.rows, slots: fx.slots, slotConfigurations: [], language: 'en', dimensions: { width: w, height: h },
+      options: {
+        theme,
+        height: { scale: $('scale').value, max: $('max').value, fixedMax: +$('fixedMax').value },
+        color: { mode: $('cmode').value, source: $('csrc').value, palette: 'Set1' },
+        labels: { density: $('labels').value, topN: 12, value: true },
+        panel: { show: $('panel').checked, title: '', subtitle: '' },
+        footer: { source: ds === 'techPay' ? 'Pay: Levels.fyi medians, Oct 2026.' : '' },
+        card: { rank: true, linkText: ds === 'techPay' ? 'View on Levels.fyi' : 'Open link', note: '' },
+        rank: { order: 'desc' },
+        camera: { start: $('cam').value, tilt: $('tilt').checked },
+        interaction: { filter: true },
+        map: { animation: $('anim').checked }
+      }
+    };
+  }
+  window.renderNow = () => { const t = performance.now(); chart.render(params()); log(`render() took ${(performance.now() - t).toFixed(1)} ms`); };
+  window.resizeNow = () => { const p = params(); chart.resize({ container, dimensions: p.dimensions }); };
+  $('go').addEventListener('click', window.renderNow);
+  $('size').addEventListener('change', window.resizeNow);
+  window.chart = chart;
+  log(`bundle loaded (${(src.length / 1e6).toFixed(2)} MB)`);
+  window.renderNow();
+  const loader = () => container.querySelector('.loader.done');
+  const wait = setInterval(() => { if (loader()) { clearInterval(wait); log(`city ready ${(performance.now() - t0).toFixed(0)} ms after page start`); window.cityReadyMs = performance.now() - t0; } }, 50);
+</script>
+</body>
+</html>
